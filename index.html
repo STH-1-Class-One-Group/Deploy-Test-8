@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>우리 집 흑백요리사</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .hidden { display: none; }
+        .mobile-frame { width: 393px; height: 852px; border: 8px solid #222; border-radius: 3rem; overflow: hidden; position: relative; background: #000; color: white; }
+        .btn-gradient { background: linear-gradient(135deg, #444, #111); }
+    </style>
+</head>
+<body class="bg-gray-300 flex justify-center items-center min-h-screen font-sans">
+
+    <div class="mobile-frame shadow-2xl flex flex-col">
+        
+        <div id="screen-entry" class="flex-1 flex flex-col p-8 justify-between">
+            <div class="mt-20 text-center">
+                <h1 class="text-4xl font-black mb-2 italic">흑백요리사</h1>
+                <p class="text-gray-400">설날 음식 생존 평가</p>
+            </div>
+            
+            <div class="space-y-6 text-center">
+                <p class="text-xl font-bold">당신은 누구입니까?</p>
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="selectSpoon('흑수저')" class="py-10 border border-gray-600 rounded-2xl hover:bg-white hover:text-black transition-all font-bold">흑수저</button>
+                    <button onclick="selectSpoon('백수저')" class="py-10 bg-white text-black rounded-2xl font-bold">백수저</button>
+                </div>
+                <input id="nickname" type="text" placeholder="닉네임을 입력하세요" class="w-full bg-transparent border-b-2 border-gray-600 py-2 text-center focus:outline-none focus:border-white">
+            </div>
+
+            <button onclick="goNext('screen-assessment')" class="mb-10 w-full py-4 bg-white text-black rounded-xl font-bold">대결 시작하기</button>
+        </div>
+
+        <div id="screen-assessment" class="hidden flex-1 flex flex-col p-8 justify-center">
+            <h2 class="text-2xl font-bold mb-10 text-center italic">"맛을 평가하겠습니다"</h2>
+            
+            <div class="space-y-8">
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">음식 이름</label>
+                    <input id="food-name" type="text" placeholder="예: 엄마표 갈비찜" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
+                </div>
+
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">맛 평가 (0: 탈락 ~ 100: 생존)</label>
+                    <input id="taste-score" type="range" min="0" max="100" value="50" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                    <div class="flex justify-between text-xs mt-2"><span>탈락</span><span id="score-val">50점</span><span>생존</span></div>
+                </div>
+
+                <div class="flex items-center gap-3 bg-gray-900 p-4 rounded-xl">
+                    <input id="is-intended" type="checkbox" class="w-5 h-5">
+                    <label for="is-intended" class="text-sm">의도한 맛입니까?</label>
+                </div>
+            </div>
+
+            <button onclick="evaluateResult()" class="mt-12 w-full py-4 bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-900/50">심사 결과 확인</button>
+        </div>
+
+        <div id="screen-result" class="hidden flex-1 flex flex-col p-8 justify-center items-center text-center">
+            <div id="result-stamp" class="text-6-xl font-black mb-4 rotate-[-10deg]"></div>
+            
+            <div class="bg-gray-900 w-full p-8 rounded-3xl border border-gray-800 mb-8">
+                <p id="result-food" class="text-gray-400 mb-2"></p>
+                <h3 id="result-comment" class="text-2xl font-bold leading-tight"></h3>
+            </div>
+
+            <button onclick="location.reload()" class="w-full py-4 border border-gray-700 rounded-xl font-bold text-gray-400">처음으로 돌아가기</button>
+        </div>
+
+    </div>
+
+    <script>
+        let userSpoon = "";
+        
+        // 슬라이더 값 실시간 표시
+        document.getElementById('taste-score').addEventListener('input', (e) => {
+            document.getElementById('score-val').innerText = e.target.value + "점";
+        });
+
+        function selectSpoon(spoon) {
+            userSpoon = spoon;
+            alert(spoon + "를 선택하셨습니다.");
+        }
+
+        function goNext(screenId) {
+            const nickname = document.getElementById('nickname').value;
+            if(!nickname) return alert("닉네임을 입력해주세요.");
+            showScreen(screenId);
+        }
+
+        function showScreen(id) {
+            ['screen-entry', 'screen-assessment', 'screen-result'].forEach(s => {
+                document.getElementById(s).classList.add('hidden');
+            });
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function evaluateResult() {
+            const foodName = document.getElementById('food-name').value;
+            const score = document.getElementById('taste-score').value;
+            const intended = document.getElementById('is-intended').checked;
+            
+            if(!foodName) return alert("음식 이름을 입력해주세요.");
+
+            const stamp = document.getElementById('result-stamp');
+            const comment = document.getElementById('result-comment');
+            document.getElementById('result-food').innerText = "[" + foodName + "] 심사평";
+
+            if (score >= 70 && intended) {
+                stamp.innerText = "생존 (PASS)";
+                stamp.className = "text-5xl font-black mb-4 rotate-[-10deg] text-green-500";
+                comment.innerText = "채소의 익힘 정도가 아주 이븐(Even)하게 익었습니다. 생존입니다.";
+            } else if (score >= 70 && !intended) {
+                stamp.innerText = "보류";
+                stamp.className = "text-5xl font-black mb-4 rotate-[-10deg] text-yellow-500";
+                comment.innerText = "맛은 좋으나 의도가 불분명합니다. 슈퍼패스를 기다리세요.";
+            } else {
+                stamp.innerText = "탈락 (FAIL)";
+                stamp.className = "text-5xl font-black mb-4 rotate-[-10deg] text-red-500";
+                comment.innerText = "고기가 이븐하게 익지 않았어요. 안성재 심사위원이 고개를 저었습니다.";
+            }
+
+            showScreen('screen-result');
+        }
+    </script>
+</body>
+</html>
