@@ -3,92 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hand-Drip Master</title>
+    <title>Hand-Drip Master v2</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;700;900&display=swap" rel="stylesheet">
     <style>
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8f5f2; }
         .hidden { display: none; }
-        .mobile-frame { width: 393px; height: 852px; border: 8px solid #333; border-radius: 3rem; overflow: hidden; position: relative; background: #fdfbf7; }
-        .coffee-brown { background-color: #4b3621; }
+        .mobile-frame { 
+            width: 393px; height: 852px; 
+            background: #ffffff; 
+            border-radius: 40px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .active-btn {
+            background-color: #4b3621 !important;
+            color: white !important;
+            transform: scale(1.02);
+        }
+        /* 페이드 인 애니메이션 */
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
-<body class="bg-gray-200 flex justify-center items-center min-h-screen">
+<body class="flex justify-center items-center min-h-screen">
 
-    <div class="mobile-frame shadow-2xl flex flex-col font-sans">
+    <div class="mobile-frame flex flex-col">
         
-        <div id="screen-select" class="flex-1 flex flex-col p-8">
-            <h1 class="mt-20 text-3xl font-bold text-gray-800 mb-2">어떤 커피를<br>내리시나요?</h1>
-            <p class="text-gray-500 mb-10 text-sm">최적의 핸드드립 레시피를 제안합니다.</p>
+        <div id="screen-select" class="fade-in flex-1 flex flex-col p-8">
+            <div class="mt-16 mb-12">
+                <span class="text-amber-700 font-bold text-sm tracking-widest uppercase">Barista Guide</span>
+                <h1 class="text-4xl font-black text-gray-900 leading-tight mt-2">Perfect<br>Hand-Drip</h1>
+            </div>
             
-            <div class="grid gap-4">
-                <button onclick="setDrink('Americano')" class="p-8 border-2 border-amber-900 rounded-3xl text-left hover:bg-amber-50 transition-all">
-                    <span class="text-2xl font-bold block">Americano</span>
-                    <span class="text-xs text-amber-800">깔끔하고 부드러운 추출</span>
+            <div class="space-y-4">
+                <button onclick="setDrink('Americano')" class="w-full p-6 bg-gray-50 rounded-3xl text-left border border-transparent hover:border-amber-200 transition-all group">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="text-2xl font-bold block text-gray-800">Americano</span>
+                            <span class="text-sm text-gray-500">깔끔한 본연의 맛</span>
+                        </div>
+                        <span class="text-2xl group-hover:translate-x-1 transition-transform">→</span>
+                    </div>
                 </button>
-                <button onclick="setDrink('Latte')" class="p-8 border-2 border-amber-900 rounded-3xl text-left hover:bg-amber-50 transition-all">
-                    <span class="text-2xl font-bold block">Latte</span>
-                    <span class="text-xs text-amber-800">진한 커피 에센스 추출</span>
+                <button onclick="setDrink('Latte')" class="w-full p-6 bg-gray-50 rounded-3xl text-left border border-transparent hover:border-amber-200 transition-all group">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="text-2xl font-bold block text-gray-800">Latte</span>
+                            <span class="text-sm text-gray-500">우유와 어우러지는 진한 에센스</span>
+                        </div>
+                        <span class="text-2xl group-hover:translate-x-1 transition-transform">→</span>
+                    </div>
                 </button>
             </div>
         </div>
 
-        <div id="screen-option" class="hidden flex-1 flex flex-col p-8">
-            <button onclick="showScreen('screen-select')" class="mt-12 text-gray-400">← 뒤로가기</button>
-            <h2 id="selected-title" class="text-2xl font-bold mt-4 mb-10 text-amber-900"></h2>
+        <div id="screen-option" class="hidden fade-in flex-1 flex flex-col p-8">
+            <button onclick="showScreen('screen-select')" class="mt-12 text-gray-400 font-medium">✕ Close</button>
+            <h2 id="selected-title" class="text-3xl font-black mt-6 mb-10 text-gray-900"></h2>
             
-            <div class="space-y-8">
-                <div>
-                    <p class="font-bold mb-3">온도 설정</p>
-                    <div class="flex gap-2">
-                        <button onclick="setMode('Hot')" id="btn-hot" class="flex-1 py-3 border rounded-xl font-bold">HOT</button>
-                        <button onclick="setMode('Ice')" id="btn-ice" class="flex-1 py-3 border rounded-xl font-bold">ICE</button>
+            <div class="space-y-10">
+                <section>
+                    <p class="text-xs font-bold text-amber-800 tracking-tighter mb-4 uppercase">Step 1. Temperature</p>
+                    <div class="flex p-1 bg-gray-100 rounded-2xl">
+                        <button onclick="setMode('Hot')" id="btn-hot" class="flex-1 py-4 rounded-xl font-bold text-gray-500 transition-all">HOT</button>
+                        <button onclick="setMode('Ice')" id="btn-ice" class="flex-1 py-4 rounded-xl font-bold text-gray-500 transition-all">ICE</button>
                     </div>
-                </div>
+                </section>
 
-                <div>
-                    <p class="font-bold mb-3">잔 수</p>
-                    <div class="flex items-center justify-between bg-white p-4 rounded-xl border">
-                        <button onclick="changeCups(-1)" class="text-2xl font-bold px-4">-</button>
-                        <span id="cup-count" class="text-xl font-bold">1잔</span>
-                        <button onclick="changeCups(1)" class="text-2xl font-bold px-4">+</button>
+                <section>
+                    <p class="text-xs font-bold text-amber-800 tracking-tighter mb-4 uppercase">Step 2. Servings</p>
+                    <div class="flex items-center justify-between bg-white p-2 rounded-2xl border-2 border-gray-100">
+                        <button onclick="changeCups(-1)" class="w-12 h-12 flex items-center justify-center bg-gray-50 rounded-xl text-xl font-bold hover:bg-gray-100">-</button>
+                        <span id="cup-count" class="text-2xl font-black text-gray-800">1 Cup</span>
+                        <button onclick="changeCups(1)" class="w-12 h-12 flex items-center justify-center bg-gray-50 rounded-xl text-xl font-bold hover:bg-gray-100">+</button>
                     </div>
-                </div>
+                </section>
             </div>
 
-            <button onclick="calculateRecipe()" class="mt-auto mb-10 w-full py-4 coffee-brown text-white rounded-2xl font-bold shadow-lg">레시피 확인</button>
+            <button onclick="calculateRecipe()" class="mt-auto mb-10 w-full py-5 bg-gray-900 text-white rounded-2xl font-bold text-lg shadow-xl active:scale-95 transition-all">
+                Create Recipe
+            </button>
         </div>
 
-        <div id="screen-result" class="hidden flex-1 flex flex-col p-8">
-            <h2 class="mt-16 text-2xl font-bold text-amber-900 mb-6 text-center italic underline">Today's Brew Guide</h2>
+        <div id="screen-result" class="hidden fade-in flex-1 flex flex-col bg-gray-900 text-white p-8">
+            <div class="mt-16 text-center">
+                <p class="text-amber-500 font-bold tracking-widest text-xs uppercase mb-2">Brewing Guide</p>
+                <h2 id="res-title" class="text-2xl font-bold mb-10"></h2>
+            </div>
             
-            <div class="grid grid-cols-2 gap-4 mb-8">
-                <div class="bg-white p-4 rounded-2xl border text-center">
-                    <p class="text-[10px] text-gray-400">분쇄도</p>
-                    <p id="res-grind" class="text-xl font-bold"></p>
+            <div class="grid grid-cols-2 gap-3 mb-10">
+                <div class="bg-white/10 p-5 rounded-3xl border border-white/10">
+                    <p class="text-[10px] text-gray-400 mb-1 uppercase">Grind Size</p>
+                    <p id="res-grind" class="text-xl font-black text-amber-400"></p>
                 </div>
-                <div class="bg-white p-4 rounded-2xl border text-center">
-                    <p class="text-[10px] text-gray-400">물 온도</p>
-                    <p class="text-xl font-bold text-red-500">95°C</p>
+                <div class="bg-white/10 p-5 rounded-3xl border border-white/10">
+                    <p class="text-[10px] text-gray-400 mb-1 uppercase">Temp</p>
+                    <p class="text-xl font-black">95°C</p>
                 </div>
-                <div class="bg-white p-4 rounded-2xl border text-center">
-                    <p class="text-[10px] text-gray-400">원두 양</p>
-                    <p id="res-beans" class="text-xl font-bold"></p>
+                <div class="bg-white/10 p-5 rounded-3xl border border-white/10">
+                    <p class="text-[10px] text-gray-400 mb-1 uppercase">Coffee</p>
+                    <p id="res-beans" class="text-xl font-black text-amber-400"></p>
                 </div>
-                <div class="bg-white p-4 rounded-2xl border text-center">
-                    <p class="text-[10px] text-gray-400">총 추출량</p>
-                    <p id="res-total" class="text-xl font-bold text-blue-600"></p>
+                <div class="bg-white/10 p-5 rounded-3xl border border-white/10">
+                    <div class="flex justify-between items-start">
+                        <p class="text-[10px] text-gray-400 mb-1 uppercase">Extraction</p>
+                    </div>
+                    <p id="res-total" class="text-xl font-black"></p>
                 </div>
             </div>
 
-            <div class="p-6 bg-amber-50 rounded-3xl border-2 border-dashed border-amber-200">
-                <p class="text-sm font-bold text-amber-900 mb-2">📌 가이드</p>
-                <ul class="text-xs space-y-2 text-amber-800">
-                    <li>1. 95도의 물로 30g 부어 뜸을 들입니다.</li>
-                    <li>2. 커피 에센스를 충분히 추출하세요.</li>
-                    <li>3. 목표 추출량에 도달하면 드리퍼를 제거합니다.</li>
-                </ul>
+            <div class="space-y-4 mb-10">
+                <div class="flex gap-4 items-start">
+                    <span class="w-6 h-6 rounded-full bg-amber-500 text-gray-900 flex items-center justify-center text-[10px] font-bold shrink-0">1</span>
+                    <p class="text-sm text-gray-300">95도의 물 30g을 부어 30초간 뜸을 들입니다.</p>
+                </div>
+                <div class="flex gap-4 items-start">
+                    <span class="w-6 h-6 rounded-full bg-amber-500 text-gray-900 flex items-center justify-center text-[10px] font-bold shrink-0">2</span>
+                    <p class="text-sm text-gray-300">중심에서 바깥으로 원을 그리며 부드럽게 추출하세요.</p>
+                </div>
             </div>
 
-            <button onclick="location.reload()" class="mt-auto mb-10 w-full py-4 border-2 border-gray-200 rounded-2xl text-gray-400 font-bold">처음으로</button>
+            <button onclick="location.reload()" class="mt-auto mb-10 w-full py-4 border border-white/20 rounded-2xl text-gray-400 font-bold hover:bg-white/5 transition-all">
+                Reset
+            </button>
         </div>
 
     </div>
@@ -103,23 +150,23 @@
 
         function setDrink(d) {
             config.drink = d;
-            document.getElementById('selected-title').innerText = d === 'Americano' ? "Americano Recipe" : "Latte Recipe";
+            document.getElementById('selected-title').innerText = d;
             showScreen('screen-option');
         }
 
         function setMode(m) {
             config.mode = m;
-            document.getElementById('btn-hot').className = m === 'Hot' ? 'flex-1 py-3 bg-red-500 text-white rounded-xl font-bold' : 'flex-1 py-3 border rounded-xl font-bold';
-            document.getElementById('btn-ice').className = m === 'Ice' ? 'flex-1 py-3 bg-blue-500 text-white rounded-xl font-bold' : 'flex-1 py-3 border rounded-xl font-bold';
+            document.getElementById('btn-hot').className = m === 'Hot' ? 'flex-1 py-4 rounded-xl font-bold active-btn' : 'flex-1 py-4 rounded-xl font-bold text-gray-500 hover:bg-gray-200 transition-all';
+            document.getElementById('btn-ice').className = m === 'Ice' ? 'flex-1 py-4 rounded-xl font-bold active-btn' : 'flex-1 py-4 rounded-xl font-bold text-gray-500 hover:bg-gray-200 transition-all';
         }
 
         function changeCups(n) {
             config.cups = Math.max(1, config.cups + n);
-            document.getElementById('cup-count').innerText = config.cups + "잔";
+            document.getElementById('cup-count').innerText = config.cups + " Cup" + (config.cups > 1 ? "s" : "");
         }
 
         function calculateRecipe() {
-            if(!config.mode) return alert("온도를 선택해주세요!");
+            if(!config.mode) return alert("Please select Hot or Ice!");
             
             let grind, beans, total;
             const { drink, mode, cups } = config;
@@ -134,11 +181,12 @@
                     beans = (23 + (cups-1)*10) + "g";
                     total = (90 + (cups-1)*10) + " ~ 100g";
                 } else {
-                    beans = "60g"; // Ice Latte 기준 고정
+                    beans = "60g"; 
                     total = "200 ~ 210g";
                 }
             }
 
+            document.getElementById('res-title').innerText = mode + " " + drink;
             document.getElementById('res-grind').innerText = grind;
             document.getElementById('res-beans').innerText = beans;
             document.getElementById('res-total').innerText = total;
