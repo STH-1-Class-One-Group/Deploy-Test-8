@@ -3,194 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hand-Drip Master v2</title>
+    <title>Hand-Drip Master v3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8f5f2; }
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8f5f2; touch-action: manipulation; }
         .hidden { display: none; }
-        .mobile-frame { 
-            width: 393px; height: 852px; 
-            background: #ffffff; 
-            border-radius: 40px; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-            overflow: hidden;
-            position: relative;
-        }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        .active-btn {
-            background-color: #4b3621 !important;
-            color: white !important;
-            transform: scale(1.02);
-        }
-        /* 페이드 인 애니메이션 */
+        .mobile-frame { width: 393px; height: 852px; background: #ffffff; border-radius: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); overflow: hidden; position: relative; }
+        .active-btn { background-color: #4b3621 !important; color: white !important; transform: scale(1.02); }
         .fade-in { animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* 주전자 애니메이션 */
+        .kettle-float { animation: float 2s infinite ease-in-out; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
     </style>
 </head>
 <body class="flex justify-center items-center min-h-screen">
 
-    <div class="mobile-frame flex flex-col">
+    <div class="mobile-frame flex flex-col shadow-2xl">
         
         <div id="screen-select" class="fade-in flex-1 flex flex-col p-8">
             <div class="mt-16 mb-12">
-                <span class="text-amber-700 font-bold text-sm tracking-widest uppercase">Barista Guide</span>
-                <h1 class="text-4xl font-black text-gray-900 leading-tight mt-2">Perfect<br>Hand-Drip</h1>
+                <span class="text-amber-700 font-bold text-sm tracking-widest uppercase">Barista v3</span>
+                <h1 class="text-4xl font-black text-gray-900 leading-tight mt-2">Start Your<br>Brewing</h1>
             </div>
-            
             <div class="space-y-4">
-                <button onclick="setDrink('Americano')" class="w-full p-6 bg-gray-50 rounded-3xl text-left border border-transparent hover:border-amber-200 transition-all group">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <span class="text-2xl font-bold block text-gray-800">Americano</span>
-                            <span class="text-sm text-gray-500">깔끔한 본연의 맛</span>
-                        </div>
-                        <span class="text-2xl group-hover:translate-x-1 transition-transform">→</span>
-                    </div>
+                <button onclick="setDrink('Americano')" class="w-full p-6 bg-gray-50 rounded-3xl text-left border hover:border-amber-200 transition-all">
+                    <span class="text-2xl font-bold block">Americano</span>
+                    <span class="text-sm text-gray-500">깔끔한 본연의 맛</span>
                 </button>
-                <button onclick="setDrink('Latte')" class="w-full p-6 bg-gray-50 rounded-3xl text-left border border-transparent hover:border-amber-200 transition-all group">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <span class="text-2xl font-bold block text-gray-800">Latte</span>
-                            <span class="text-sm text-gray-500">우유와 어우러지는 진한 에센스</span>
-                        </div>
-                        <span class="text-2xl group-hover:translate-x-1 transition-transform">→</span>
-                    </div>
+                <button onclick="setDrink('Latte')" class="w-full p-6 bg-gray-50 rounded-3xl text-left border hover:border-amber-200 transition-all">
+                    <span class="text-2xl font-bold block">Latte</span>
+                    <span class="text-sm text-gray-500">우유와 어우러지는 진한 에센스</span>
                 </button>
             </div>
         </div>
 
         <div id="screen-option" class="hidden fade-in flex-1 flex flex-col p-8">
-            <button onclick="showScreen('screen-select')" class="mt-12 text-gray-400 font-medium">✕ Close</button>
-            <h2 id="selected-title" class="text-3xl font-black mt-6 mb-10 text-gray-900"></h2>
+            <button onclick="showScreen('screen-select')" class="mt-12 text-gray-400 font-medium">✕ Back</button>
+            <h2 id="selected-title" class="text-3xl font-black mt-6 mb-8 text-gray-900"></h2>
             
-            <div class="space-y-10">
+            <div class="space-y-8 overflow-y-auto">
                 <section>
-                    <p class="text-xs font-bold text-amber-800 tracking-tighter mb-4 uppercase">Step 1. Temperature</p>
-                    <div class="flex p-1 bg-gray-100 rounded-2xl">
-                        <button onclick="setMode('Hot')" id="btn-hot" class="flex-1 py-4 rounded-xl font-bold text-gray-500 transition-all">HOT</button>
-                        <button onclick="setMode('Ice')" id="btn-ice" class="flex-1 py-4 rounded-xl font-bold text-gray-500 transition-all">ICE</button>
+                    <p class="text-xs font-bold text-amber-800 mb-3 uppercase">Step 1. Bean Taste</p>
+                    <div class="flex gap-2">
+                        <button onclick="setBean('Acidic')" id="bean-acidic" class="flex-1 py-4 border rounded-2xl text-sm font-bold transition-all">산미/화사함</button>
+                        <button onclick="setBean('Nutty')" id="bean-nutty" class="flex-1 py-4 border rounded-2xl text-sm font-bold transition-all">고소/묵직함</button>
                     </div>
                 </section>
 
                 <section>
-                    <p class="text-xs font-bold text-amber-800 tracking-tighter mb-4 uppercase">Step 2. Servings</p>
-                    <div class="flex items-center justify-between bg-white p-2 rounded-2xl border-2 border-gray-100">
-                        <button onclick="changeCups(-1)" class="w-12 h-12 flex items-center justify-center bg-gray-50 rounded-xl text-xl font-bold hover:bg-gray-100">-</button>
-                        <span id="cup-count" class="text-2xl font-black text-gray-800">1 Cup</span>
-                        <button onclick="changeCups(1)" class="w-12 h-12 flex items-center justify-center bg-gray-50 rounded-xl text-xl font-bold hover:bg-gray-100">+</button>
+                    <p class="text-xs font-bold text-amber-800 mb-3 uppercase">Step 2. Temperature</p>
+                    <div class="flex p-1 bg-gray-100 rounded-2xl">
+                        <button onclick="setMode('Hot')" id="btn-hot" class="flex-1 py-3 rounded-xl font-bold text-gray-500">HOT</button>
+                        <button onclick="setMode('Ice')" id="btn-ice" class="flex-1 py-3 rounded-xl font-bold text-gray-500">ICE</button>
+                    </div>
+                </section>
+
+                <section>
+                    <p class="text-xs font-bold text-amber-800 mb-3 uppercase">Step 3. Servings</p>
+                    <div class="flex items-center justify-between bg-white p-2 rounded-2xl border">
+                        <button onclick="changeCups(-1)" class="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-xl font-bold">-</button>
+                        <span id="cup-count" class="text-xl font-black">1 Cup</span>
+                        <button onclick="changeCups(1)" class="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-xl font-bold">+</button>
                     </div>
                 </section>
             </div>
 
-            <button onclick="calculateRecipe()" class="mt-auto mb-10 w-full py-5 bg-gray-900 text-white rounded-2xl font-bold text-lg shadow-xl active:scale-95 transition-all">
-                Create Recipe
-            </button>
+            <button onclick="calculateRecipe()" class="mt-auto mb-10 w-full py-5 bg-gray-900 text-white rounded-2xl font-bold text-lg shadow-xl">Confirm Recipe</button>
         </div>
 
-        <div id="screen-result" class="hidden fade-in flex-1 flex flex-col bg-gray-900 text-white p-8">
-            <div class="mt-16 text-center">
-                <p class="text-amber-500 font-bold tracking-widest text-xs uppercase mb-2">Brewing Guide</p>
-                <h2 id="res-title" class="text-2xl font-bold mb-10"></h2>
-            </div>
+        <div id="screen-result" class="hidden fade-in flex-1 flex flex-col p-8 bg-[#1a1a1a] text-white">
+            <h2 class="mt-16 text-center text-amber-500 font-bold uppercase tracking-widest text-xs mb-10">Your Custom Recipe</h2>
             
-            <div class="grid grid-cols-2 gap-3 mb-10">
-                <div class="bg-white/10 p-5 rounded-3xl border border-white/10">
-                    <p class="text-[10px] text-gray-400 mb-1 uppercase">Grind Size</p>
-                    <p id="res-grind" class="text-xl font-black text-amber-400"></p>
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="bg-white/5 p-4 rounded-2xl border border-white/10 text-center">
+                    <p class="text-[10px] text-gray-500 mb-1 uppercase">Water Temp</p>
+                    <p id="res-temp" class="text-xl font-black text-amber-400"></p>
                 </div>
-                <div class="bg-white/10 p-5 rounded-3xl border border-white/10">
-                    <p class="text-[10px] text-gray-400 mb-1 uppercase">Temp</p>
-                    <p class="text-xl font-black">95°C</p>
+                <div class="bg-white/5 p-4 rounded-2xl border border-white/10 text-center">
+                    <p class="text-[10px] text-gray-500 mb-1 uppercase">Grind Size</p>
+                    <p id="res-grind" class="text-xl font-black"></p>
                 </div>
-                <div class="bg-white/10 p-5 rounded-3xl border border-white/10">
-                    <p class="text-[10px] text-gray-400 mb-1 uppercase">Coffee</p>
-                    <p id="res-beans" class="text-xl font-black text-amber-400"></p>
-                </div>
-                <div class="bg-white/10 p-5 rounded-3xl border border-white/10">
-                    <div class="flex justify-between items-start">
-                        <p class="text-[10px] text-gray-400 mb-1 uppercase">Extraction</p>
+                <div class="bg-white/5 p-4 rounded-2xl border border-white/10 text-center col-span-2">
+                    <div class="flex justify-around">
+                        <div><p class="text-[10px] text-gray-500 uppercase">Beans</p><p id="res-beans" class="text-xl font-black"></p></div>
+                        <div class="w-px bg-white/10"></div>
+                        <div><p class="text-[10px] text-gray-500 uppercase">Total Target</p><p id="res-total" class="text-xl font-black text-blue-400"></p></div>
                     </div>
-                    <p id="res-total" class="text-xl font-black"></p>
                 </div>
             </div>
 
-            <div class="space-y-4 mb-10">
-                <div class="flex gap-4 items-start">
-                    <span class="w-6 h-6 rounded-full bg-amber-500 text-gray-900 flex items-center justify-center text-[10px] font-bold shrink-0">1</span>
-                    <p class="text-sm text-gray-300">95도의 물 30g을 부어 30초간 뜸을 들입니다.</p>
-                </div>
-                <div class="flex gap-4 items-start">
-                    <span class="w-6 h-6 rounded-full bg-amber-500 text-gray-900 flex items-center justify-center text-[10px] font-bold shrink-0">2</span>
-                    <p class="text-sm text-gray-300">중심에서 바깥으로 원을 그리며 부드럽게 추출하세요.</p>
-                </div>
+            <div class="p-6 bg-amber-900/20 rounded-3xl border border-amber-900/30 text-center mb-8">
+                <p class="text-sm text-amber-200">기구 세팅이 끝나셨나요?</p>
+                <p class="text-xs text-amber-500/70 mt-1">추출을 시작하면 가이드가 시작됩니다.</p>
             </div>
 
-            <button onclick="location.reload()" class="mt-auto mb-10 w-full py-4 border border-white/20 rounded-2xl text-gray-400 font-bold hover:bg-white/5 transition-all">
-                Reset
-            </button>
+            <button onclick="startBrewing()" class="mt-auto mb-10 w-full py-5 bg-amber-500 text-gray-900 rounded-2xl font-black text-lg shadow-xl shadow-amber-500/20">START BREWING</button>
+        </div>
+
+        <div id="screen-guide" class="hidden fade-in flex-1 flex flex-col p-8 bg-gray-900 text-white">
+            <div class="mt-16 flex justify-between items-center">
+                <span id="step-indicator" class="px-3 py-1 bg-amber-500 text-gray-900 rounded-full text-[10px] font-black uppercase">Step 1</span>
+                <span id="timer-display" class="text-3xl font-black font-mono text-amber-500">00:30</span>
+            </div>
+
+            <div class="flex-1 flex flex-col justify-center items-center text-center">
+                <div class="kettle-float text-6xl mb-8">☕️</div>
+                <h3 id="guide-title" class="text-2xl font-bold mb-4 italic">뜸 들이기 (Bloom)</h3>
+                <p id="guide-desc" class="text-gray-400 leading-relaxed px-4 text-sm">원두 전체를 적실 만큼(30~40g) 물을 붓고 기다려주세요.</p>
+            </div>
+
+            <div class="mb-10 w-full bg-gray-800 h-2 rounded-full overflow-hidden">
+                <div id="progress-bar" class="h-full bg-amber-500 transition-all duration-500" style="width: 33%"></div>
+            </div>
+
+            <button id="guide-next-btn" onclick="nextStep()" class="mb-10 w-full py-5 bg-white text-black rounded-2xl font-black">NEXT STEP</button>
         </div>
 
     </div>
 
     <script>
-        let config = { drink: '', mode: '', cups: 1 };
+        let config = { drink: '', mode: '', cups: 1, bean: '' };
+        let currentStep = 1;
+        let timer = null;
 
         function showScreen(id) {
-            ['screen-select', 'screen-option', 'screen-result'].forEach(s => document.getElementById(s).classList.add('hidden'));
+            ['screen-select', 'screen-option', 'screen-result', 'screen-guide'].forEach(s => document.getElementById(s).classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
         }
 
-        function setDrink(d) {
-            config.drink = d;
-            document.getElementById('selected-title').innerText = d;
-            showScreen('screen-option');
+        function setDrink(d) { config.drink = d; document.getElementById('selected-title').innerText = d; showScreen('screen-option'); }
+
+        function setBean(b) {
+            config.bean = b;
+            document.getElementById('bean-acidic').className = b === 'Acidic' ? 'flex-1 py-4 rounded-2xl text-sm font-bold active-btn' : 'flex-1 py-4 border rounded-2xl text-sm font-bold';
+            document.getElementById('bean-nutty').className = b === 'Nutty' ? 'flex-1 py-4 rounded-2xl text-sm font-bold active-btn' : 'flex-1 py-4 border rounded-2xl text-sm font-bold';
         }
 
         function setMode(m) {
             config.mode = m;
-            document.getElementById('btn-hot').className = m === 'Hot' ? 'flex-1 py-4 rounded-xl font-bold active-btn' : 'flex-1 py-4 rounded-xl font-bold text-gray-500 hover:bg-gray-200 transition-all';
-            document.getElementById('btn-ice').className = m === 'Ice' ? 'flex-1 py-4 rounded-xl font-bold active-btn' : 'flex-1 py-4 rounded-xl font-bold text-gray-500 hover:bg-gray-200 transition-all';
+            document.getElementById('btn-hot').className = m === 'Hot' ? 'flex-1 py-3 rounded-xl font-bold active-btn' : 'flex-1 py-3 rounded-xl font-bold text-gray-500';
+            document.getElementById('btn-ice').className = m === 'Ice' ? 'flex-1 py-3 rounded-xl font-bold active-btn' : 'flex-1 py-3 rounded-xl font-bold text-gray-500';
         }
 
-        function changeCups(n) {
-            config.cups = Math.max(1, config.cups + n);
-            document.getElementById('cup-count').innerText = config.cups + " Cup" + (config.cups > 1 ? "s" : "");
-        }
+        function changeCups(n) { config.cups = Math.max(1, config.cups + n); document.getElementById('cup-count').innerText = config.cups + " Cup" + (config.cups > 1 ? "s" : ""); }
 
         function calculateRecipe() {
-            if(!config.mode) return alert("Please select Hot or Ice!");
+            if(!config.bean || !config.mode) return alert("원두 취향과 온도를 선택해주세요!");
             
-            let grind, beans, total;
-            const { drink, mode, cups } = config;
+            let grind, beans, total, temp;
+            const { drink, mode, cups, bean } = config;
+
+            // 원두 취향에 따른 온도 조절
+            temp = bean === 'Acidic' ? "94°C" : "91°C";
 
             if (drink === 'Americano') {
                 grind = "4.5 ~ 5.0";
                 beans = (mode === 'Hot' ? 18 + (cups-1)*10 : 20 + (cups-1)*10) + "g";
-                total = (170 + (cups-1)*10) + " ~ " + (180 + (cups-1)*10) + "g";
+                total = (170 + (cups-1)*10) + "~" + (180 + (cups-1)*10) + "g";
             } else {
                 grind = "2.0 ~ 2.5";
                 if(mode === 'Hot') {
                     beans = (23 + (cups-1)*10) + "g";
-                    total = (90 + (cups-1)*10) + " ~ 100g";
+                    total = (90 + (cups-1)*10) + "~100g";
                 } else {
-                    beans = "60g"; 
-                    total = "200 ~ 210g";
+                    beans = "60g"; total = "200~210g";
                 }
             }
 
-            document.getElementById('res-title').innerText = mode + " " + drink;
+            document.getElementById('res-temp').innerText = temp;
             document.getElementById('res-grind').innerText = grind;
             document.getElementById('res-beans').innerText = beans;
             document.getElementById('res-total').innerText = total;
             showScreen('screen-result');
+        }
+
+        function startBrewing() {
+            currentStep = 1;
+            updateGuideUI();
+            showScreen('screen-guide');
+            startTimer(30);
+        }
+
+        function startTimer(seconds) {
+            clearInterval(timer);
+            let timeLeft = seconds;
+            const display = document.getElementById('timer-display');
+            
+            timer = setInterval(() => {
+                timeLeft--;
+                let m = Math.floor(timeLeft / 60);
+                let s = timeLeft % 60;
+                display.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    display.innerText = "DONE!";
+                    display.classList.add('animate-bounce');
+                }
+            }, 1000);
+        }
+
+        function nextStep() {
+            currentStep++;
+            if(currentStep > 3) return location.reload();
+            updateGuideUI();
+        }
+
+        function updateGuideUI() {
+            const title = document.getElementById('guide-title');
+            const desc = document.getElementById('guide-desc');
+            const indicator = document.getElementById('step-indicator');
+            const progress = document.getElementById('progress-bar');
+            const display = document.getElementById('timer-display');
+
+            display.classList.remove('animate-bounce');
+
+            if(currentStep === 1) {
+                indicator.innerText = "Step 1";
+                title.innerText = "뜸 들이기 (Bloom)";
+                desc.innerText = "원두 전체를 적실 만큼(30~40g) 물을 붓고 30초간 기다려주세요.";
+                progress.style.width = "33%";
+                display.innerText = "00:30";
+            } else if(currentStep === 2) {
+                clearInterval(timer);
+                indicator.innerText = "Step 2";
+                title.innerText = "1차 추출 (Pouring)";
+                desc.innerText = "중심에서 바깥으로 나선형을 그리며 부드럽게 추출을 시작하세요.";
+                progress.style.width = "66%";
+                display.innerText = "---";
+            } else {
+                indicator.innerText = "Step 3";
+                title.innerText = "추출 완료 (Finish)";
+                desc.innerText = "목표 추출량에 도달하면 즉시 드리퍼를 제거하고 커피를 즐기세요!";
+                progress.style.width = "100%";
+                display.innerText = "FINISH";
+                document.getElementById('guide-next-btn').innerText = "ENJOY COFFEE (RESET)";
+            }
         }
     </script>
 </body>
